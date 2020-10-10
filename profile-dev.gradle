@@ -1,0 +1,21 @@
+def inputVersion = System.getProperty("version")
+version = (inputVersion ?: "${latestVersion}") + "-SNAPSHOT"
+jar {
+	archiveVersion = "$project.version"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            version "$project.version"
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}

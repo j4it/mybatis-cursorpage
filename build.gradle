@@ -1,0 +1,47 @@
+group 'com.j4it'
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url "https://maven.aliyun.com/nexus/content/groups/public" }
+    mavenCentral ()
+    maven { url "https://plugins.gradle.org/m2/" }
+    mavenLocal ()
+}
+
+dependencies {
+    implementation 'org.mybatis:mybatis:3.4.5'
+    implementation 'com.github.jsqlparser:jsqlparser:1.4'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'com.google.guava:guava:28.1-jre'
+    implementation 'commons-codec:commons-codec:1.13'
+
+    testImplementation('junit:junit:4.12')
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+ext{
+    latestVersion = '1.0.3'
+}
+
+def env = System.getProperty('env') ?: 'dev'
+apply from: "$projectDir/profile-${env}.gradle"
+
+// 依赖树
+task allDeps(type: DependencyReportTask) {}
+
+// 打印unchecked
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
